@@ -9,8 +9,14 @@
 // - Each function should do one thing and do it well
 // Shorten feedback loop
 
-const readline = require('readline');
+// As a human player, I want to play with a computer player, so that it is more fun.
+// Examples:
+// When I place a 'O' at (0, 0)
+// Then computer player will place a 'X' at (0, 1)
+
+const readline = require('node:readline/promises');
 const validateBoard = require('./validateBoard');
+const getRandomPosition = require('./getRandomPosition')
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -24,6 +30,8 @@ const board = [
 ];
 
 let player = 'O';
+let computer = 'X'
+let currentPlayer = 'O'
 
 function writeUserInput(board, player, row, col) {
   board[row][col] = player;
@@ -58,31 +66,52 @@ function printBoard(board) {
 
 console.log('Welcome to our Tic Tac Toe game!');
 
-function start() {
+
+
+async function start() {
+
+  console.log(' ')
   printBoard(board);
 
-  rl.question('Enter your move (row and column): ', (answer) => {
+  if (currentPlayer === 'O') {
+    const answer = await rl.question('Enter your move (row and column): ')
+
     const [row, col] = answer.split(' ').map(Number);
     console.log(`You entered row: ${row}, column: ${col}`);
 
     if (validateUserInput(board, row, col)) {
-      writeUserInput(board, player, row, col);
+      writeUserInput(board, currentPlayer, row, col);
 
-      if (validateBoard(board, player) === 'win') {
-        console.log(`${player} is win`);
+      if (validateBoard(board, currentPlayer) === 'win') {
+        console.log(`${currentPlayer} is win`);
         return;
       }
 
-      if (validateBoard(board, player) === 'tie') {
+      if (validateBoard(board, currentPlayer) === 'tie') {
         console.log('Game is tie');
         return;
       }
+    } else {
+      const [computerRow, computerCol] = getRandomPosition(board)
+      writeUserInput(board, computer, computerRow, computerCol)
 
-      player = player === 'O' ? 'X' : 'O';
+      printBoard(board);
+      console.log('computer turn: ', computerRow, computerCol)
+
+      if (validateBoard(board, computer) === 'win') {
+        console.log(`${computer} is win`);
+        return;
+      }
+
+      if (validateBoard(board, computer) === 'tie') {
+        console.log('Game is tie');
+        return;
+      }
     }
+    currentPlayer = currentPlayer === 'O' ? 'X' : 'O';
 
-    start();
-  });
+  };
+  start();
 }
 
 start();

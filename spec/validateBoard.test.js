@@ -18,6 +18,6 @@ describe('validateBoard', () => {
             ['', '', ''],
         ]
 
-        expect(validateBoard(testboard, 'X')).toBe(true)
+        expect(validateBoard(testboard, 'X')).toBe('win')
     })
 })
