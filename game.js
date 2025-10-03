@@ -15,8 +15,11 @@
 // Then computer player will place a 'X' at (0, 1)
 
 const readline = require('node:readline/promises');
-const validateBoard = require('./validateBoard');
-const getRandomPosition = require('./getRandomPosition')
+const validateBoard = require('./lib/validateBoard');
+const getRandomPosition = require('./lib/getRandomPosition');
+const printBoard = require('./lib/printBoard');
+const writeUserInput = require('./lib/writeUserInput');
+const validateUserInput = require('./lib/validateUserInput');
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -24,54 +27,25 @@ const rl = readline.createInterface({
 });
 
 const board = [
-  ['', '', ''],
-  ['', '', ''],
-  ['', '', ''],
+  [' ', ' ', ' '],
+  [' ', ' ', ' '],
+  [' ', ' ', ' '],
 ];
 
-let player = 'O';
 let computer = 'X'
 let currentPlayer = 'O'
 
-function writeUserInput(board, player, row, col) {
-  board[row][col] = player;
-}
-
-function validateUserInput(board, row, col) {
-  if (row < 0 || row > 2) {
-    console.log('row should be between 0 and 2');
-    return false;
-  }
-
-  if (col < 0 || col > 2) {
-    console.log('col should be between 0 and 2');
-    return false;
-  }
-
-  if (board[row][col]) {
-    console.log('Position is already filled');
-    return false;
-  }
-
-  return true;
-}
-
-function printBoard(board) {
-  console.log(` ${board[0][0]} | ${board[0][1]} | ${board[0][2]} `);
-  console.log('--------');
-  console.log(` ${board[1][0]} | ${board[1][1]} | ${board[1][2]} `);
-  console.log('--------');
-  console.log(` ${board[2][0]} | ${board[2][1]} | ${board[2][2]} `);
-}
-
-console.log('Welcome to our Tic Tac Toe game!');
-
-
+console.log('==============================');
+console.log('   Welcome to Tic Tac Toe!');
+console.log('==============================');
+console.log('You are O, Computer is X');
+console.log('Enter your move as: row col');
+console.log('Example: 0 2');
+console.log('');
 
 async function start() {
-
-  console.log(' ')
   printBoard(board);
+  console.log('');
 
   if (currentPlayer === 'O') {
     const answer = await rl.question('Enter your move (row and column): ')
@@ -91,27 +65,27 @@ async function start() {
         console.log('Game is tie');
         return;
       }
-    } else {
-      const [computerRow, computerCol] = getRandomPosition(board)
-      writeUserInput(board, computer, computerRow, computerCol)
-
-      printBoard(board);
-      console.log('computer turn: ', computerRow, computerCol)
-
-      if (validateBoard(board, computer) === 'win') {
-        console.log(`${computer} is win`);
-        return;
-      }
-
-      if (validateBoard(board, computer) === 'tie') {
-        console.log('Game is tie');
-        return;
-      }
     }
-    currentPlayer = currentPlayer === 'O' ? 'X' : 'O';
 
-  };
+  } else {
+    const [computerRow, computerCol] = getRandomPosition(board)
+    writeUserInput(board, computer, computerRow, computerCol)
+
+    console.log('Computer placed at: ', computerRow, computerCol)
+
+    if (validateBoard(board, computer) === 'win') {
+      console.log(`${computer} is win`);
+      return;
+    }
+
+    if (validateBoard(board, computer) === 'tie') {
+      console.log('Game is tie');
+      return;
+    }
+  }
+
+  currentPlayer = currentPlayer === 'O' ? 'X' : 'O';
   start();
 }
 
-start();
+start()
