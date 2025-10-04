@@ -7,9 +7,8 @@ describe('getRandomPosition', () => {
             ['X', 'X', 'O'],
             ['O', 'X', ' '],
         ];
-        const player = 'X'
 
-        expect(getRandomPosition(board, player)).toEqual([2, 2])
+        expect(getRandomPosition(board)).toEqual([2, 2])
     })
 
     it("should return a random position from two possible moves", () => {
@@ -18,9 +17,8 @@ describe('getRandomPosition', () => {
             ['X', 'X', 'O'],
             ['O', ' ', ' '],
         ];
-        const player = 'X'
 
-        expect([[2, 2], [2, 1]]).toContain(getRandomPosition(board, player))
+        expect([[2, 2], [2, 1]]).toContain(getRandomPosition(board))
 
         // 1. Mocking on the global level
         // spyOn(Math, 'random').and.returnValue(0)
@@ -40,9 +38,8 @@ describe('getRandomPosition', () => {
             ['X', 'X', 'O'],
             ['O', 'X', 'O'],
         ];
-        const player = 'X'
 
-        expect(getRandomPosition(board, player)).toBeUndefined()
+        expect(getRandomPosition(board)).toBeUndefined()
     })
 
     it("should handle single empty space correctly", () => {
@@ -51,9 +48,8 @@ describe('getRandomPosition', () => {
             ['X', 'O', 'O'],
             ['O', 'X', ' '],
         ];
-        const player = 'X'
 
-        expect(getRandomPosition(board, player)).toEqual([2, 2])
+        expect(getRandomPosition(board)).toEqual([2, 2])
     })
 
     it("should work on completely empty board", () => {
@@ -62,9 +58,8 @@ describe('getRandomPosition', () => {
             [' ', ' ', ' '],
             [' ', ' ', ' '],
         ];
-        const player = 'X'
 
-        const result = getRandomPosition(board, player)
+        const result = getRandomPosition(board)
         expect(result).toBeDefined()
         expect(result.length).toBe(2)
         expect(result[0]).toBeGreaterThanOrEqual(0)
@@ -79,12 +74,11 @@ describe('getRandomPosition', () => {
             [' ', 'X', ' '],
             [' ', ' ', ' '],
         ];
-        const player = 'O'
 
         const results = new Set()
 
         for (let i = 0; i < 9; i++) {
-            const result = getRandomPosition(board, player)
+            const result = getRandomPosition(board)
             results.add(JSON.stringify(result))
         }
 

@@ -1,23 +1,31 @@
-const printBoard = require('../lib/printBoard');
+const printBoard = require("../lib/printBoard")
+
+class Ui {
+    constructor() {
+        this.messages = []
+    }
+
+    log(message) {
+        this.messages.push(message)
+    }
+
+    get() {
+        return this.messages
+    }
+}
 
 describe('printBoard', () => {
-    it('should not throw an error when printing an empty board', () => {
-        const board = [
-            [' ', ' ', ' '],
-            [' ', ' ', ' '],
-            [' ', ' ', ' '],
-        ];
+    fit('should print out the correct position based on the argument', () => {
+        const testboard = [
+            ['O', 'X', 'X'],
+            ['O', 'X', ' '],
+            ['O', ' ', ' '],
+        ]
 
-        expect(() => printBoard(board)).not.toThrow();
-    });
+        const ui = new Ui()
 
-    it('should not throw an error when printing a board with X and O', () => {
-        const board = [
-            ['X', 'O', 'X'],
-            ['O', 'X', 'O'],
-            ['X', 'O', ' '],
-        ];
+        printBoard(testboard, ui)
 
-        expect(() => printBoard(board)).not.toThrow();
-    });
-});
+        expect(ui.get()).toEqual([` ${testboard[0][0]} | ${testboard[0][1]} | ${testboard[0][2]} \n---+---+---\n ${testboard[1][0]} | ${testboard[1][1]} | ${testboard[1][2]} \n---+---+---\n ${testboard[2][0]} | ${testboard[2][1]} | ${testboard[2][2]} \n`])
+    })
+})

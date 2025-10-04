@@ -15,11 +15,11 @@
 // Then computer player will place a 'X' at (0, 1)
 
 const readline = require('node:readline/promises');
-const validateBoard = require('./lib/validateBoard');
 const getRandomPosition = require('./lib/getRandomPosition');
 const printBoard = require('./lib/printBoard');
 const writeUserInput = require('./lib/writeUserInput');
 const validateUserInput = require('./lib/validateUserInput');
+const checkGameEnd = require('./lib/checkGameEnd');
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -40,15 +40,59 @@ console.log('   Welcome to Tic Tac Toe!');
 console.log('==============================');
 console.log('You are O, Computer is X');
 console.log('Enter your move as: row col');
-console.log('Example: 0 2');
 console.log('');
+
+class Ui {
+  constructor(output = console, input = rl) {
+    this.output = output
+    this.input = input
+  }
+
+  log(message) {
+    this.output.log(message)
+  }
+
+  async ask(question) {
+    return await this.input.question('Enter your move (row and column): ')
+  }
+}
+
+// class FakeUI {
+//   constructor(io = console, rl = rl) {
+//     this.messages = p[]
+//   }
+
+//   log(message) {
+//     this.messages.push(message)
+//   }
+
+//   async ask(question) {
+//     return new Promise()
+//   }
+// }
+
+// class WebUI {
+//     constructor(io = console, rl = rl) {
+//     this.messages = p[]
+//   }
+
+//   log(message) {
+//     this.messages.push(message)
+//   }
+
+//   async ask(question) {
+//     return new Promise()
+//   }
+// }
+
+const ui = new Ui()
 
 async function start() {
   printBoard(board);
   console.log('');
 
   if (currentPlayer === 'O') {
-    const answer = await rl.question('Enter your move (row and column): ')
+    const answer = await ui.ask('Enter your move (row and column): ')
 
     const [row, col] = answer.split(' ').map(Number);
     console.log(`You entered row: ${row}, column: ${col}`);
@@ -56,13 +100,7 @@ async function start() {
     if (validateUserInput(board, row, col)) {
       writeUserInput(board, currentPlayer, row, col);
 
-      if (validateBoard(board, currentPlayer) === 'win') {
-        console.log(`${currentPlayer} is win`);
-        return;
-      }
-
-      if (validateBoard(board, currentPlayer) === 'tie') {
-        console.log('Game is tie');
+      if (checkGameEnd(board, currentPlayer)) {
         return;
       }
     }
@@ -73,13 +111,7 @@ async function start() {
 
     console.log('Computer placed at: ', computerRow, computerCol)
 
-    if (validateBoard(board, computer) === 'win') {
-      console.log(`${computer} is win`);
-      return;
-    }
-
-    if (validateBoard(board, computer) === 'tie') {
-      console.log('Game is tie');
+    if (checkGameEnd(board, computer)) {
       return;
     }
   }

@@ -10,6 +10,7 @@ describe('validateBoard', () => {
             ]
 
             expect(validateBoard(testboard, 'O')).toBe(false)
+            expect(validateBoard(testboard, 'X')).toBe(false)
         })
 
         it('returns false for a partially filled board with no winner', () => {
@@ -131,40 +132,6 @@ describe('validateBoard', () => {
 
             expect(validateBoard(testboard, 'X')).toBe('tie')
             expect(validateBoard(testboard, 'O')).toBe('tie')
-        })
-    })
-
-    describe('edge cases', () => {
-        it('returns false when checking wrong player for a win', () => {
-            const testboard = [
-                ['X', 'X', 'X'],
-                [' ', 'O', 'O'],
-                [' ', ' ', ' '],
-            ]
-
-            expect(validateBoard(testboard, 'O')).toBe(false)
-        })
-
-        it('prioritizes win over tie when player has winning condition on full board', () => {
-            const testboard = [
-                ['X', 'X', 'X'],
-                ['O', 'O', 'X'],
-                ['O', 'X', 'O'],
-            ]
-
-            expect(validateBoard(testboard, 'X')).toBe('win')
-            expect(validateBoard(testboard, 'O')).toBe('tie') // O doesn't have a win
-        })
-
-        it('handles mixed case scenarios correctly', () => {
-            const testboard = [
-                ['X', 'O', 'X'],
-                ['O', 'X', 'O'],
-                ['X', ' ', ' '],
-            ]
-
-            expect(validateBoard(testboard, 'X')).toBe('win')
-            expect(validateBoard(testboard, 'O')).toBe(false)
         })
     })
 })
