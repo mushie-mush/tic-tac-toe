@@ -14,47 +14,47 @@
 // When I place a 'O' at (0, 0)
 // Then computer player will place a 'X' at (0, 1)
 
-const readline = require('node:readline/promises');
-const getRandomPosition = require('./lib/getRandomPosition');
-const printBoard = require('./lib/printBoard');
-const writeUserInput = require('./lib/writeUserInput');
-const validateUserInput = require('./lib/validateUserInput');
-const checkGameEnd = require('./lib/checkGameEnd');
+const readline = require("node:readline/promises");
+const getRandomPosition = require("./lib/getRandomPosition");
+const printBoard = require("./lib/printBoard");
+const writeUserInput = require("./lib/writeUserInput");
+const validateUserInput = require("./lib/validateUserInput");
+const checkGameEnd = require("./lib/checkGameEnd");
 
 const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
+    input: process.stdin,
+    output: process.stdout,
 });
 
 const board = [
-  [' ', ' ', ' '],
-  [' ', ' ', ' '],
-  [' ', ' ', ' '],
+    [" ", " ", " "],
+    [" ", " ", " "],
+    [" ", " ", " "],
 ];
 
-let computer = 'X'
-let currentPlayer = 'O'
+let computer = "X";
+let currentPlayer = "O";
 
-console.log('==============================');
-console.log('   Welcome to Tic Tac Toe!');
-console.log('==============================');
-console.log('You are O, Computer is X');
-console.log('Enter your move as: row col');
-console.log('');
+console.log("==============================");
+console.log("   Welcome to Tic Tac Toe!");
+console.log("==============================");
+console.log("You are O, Computer is X");
+console.log("Enter your move as: row col");
+console.log("");
 
 class Ui {
-  constructor(output = console, input = rl) {
-    this.output = output
-    this.input = input
-  }
+    constructor(output = console, input = rl) {
+        this.output = output;
+        this.input = input;
+    }
 
-  log(message) {
-    this.output.log(message)
-  }
+    log(message) {
+        this.output.log(message);
+    }
 
-  async ask(question) {
-    return await this.input.question('Enter your move (row and column): ')
-  }
+    async ask(question) {
+        return await this.input.question(question);
+    }
 }
 
 // class FakeUI {
@@ -85,39 +85,38 @@ class Ui {
 //   }
 // }
 
-const ui = new Ui()
+const ui = new Ui();
 
 async function start() {
-  printBoard(board);
-  console.log('');
+    printBoard(board);
+    console.log("");
 
-  if (currentPlayer === 'O') {
-    const answer = await ui.ask('Enter your move (row and column): ')
+    if (currentPlayer === "O") {
+        const answer = await ui.ask("Enter your move (row and column): ");
 
-    const [row, col] = answer.split(' ').map(Number);
-    console.log(`You entered row: ${row}, column: ${col}`);
+        const [row, col] = answer.split(" ").map(Number);
+        console.log(`You entered row: ${row}, column: ${col}`);
 
-    if (validateUserInput(board, row, col)) {
-      writeUserInput(board, currentPlayer, row, col);
+        if (validateUserInput(board, row, col)) {
+            writeUserInput(board, currentPlayer, row, col);
 
-      if (checkGameEnd(board, currentPlayer)) {
-        return;
-      }
+            if (checkGameEnd(board, currentPlayer)) {
+                return;
+            }
+        }
+    } else {
+        const [computerRow, computerCol] = getRandomPosition(board);
+        writeUserInput(board, computer, computerRow, computerCol);
+
+        console.log("Computer placed at: ", computerRow, computerCol);
+
+        if (checkGameEnd(board, computer)) {
+            return;
+        }
     }
 
-  } else {
-    const [computerRow, computerCol] = getRandomPosition(board)
-    writeUserInput(board, computer, computerRow, computerCol)
-
-    console.log('Computer placed at: ', computerRow, computerCol)
-
-    if (checkGameEnd(board, computer)) {
-      return;
-    }
-  }
-
-  currentPlayer = currentPlayer === 'O' ? 'X' : 'O';
-  start();
+    currentPlayer = currentPlayer === "O" ? "X" : "O";
+    start();
 }
 
-start()
+start();
