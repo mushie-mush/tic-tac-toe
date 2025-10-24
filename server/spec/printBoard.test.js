@@ -15,7 +15,7 @@ class Ui {
 }
 
 describe('printBoard', () => {
-    fit('should print out the correct position based on the argument', () => {
+    it('should print out the correct position based on the argument', () => {
         const testboard = [
             ['O', 'X', 'X'],
             ['O', 'X', ' '],

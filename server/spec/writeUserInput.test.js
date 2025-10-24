@@ -8,9 +8,9 @@ describe('writeUserInput', () => {
             [' ', ' ', ' '],
         ];
 
-        writeUserInput(board, 'X', 1, 1);
+        const newBoard = writeUserInput(board, 'X', 1, 1);
 
-        expect(board[1][1]).toBe('X');
+        expect(newBoard[1][1]).toBe('X');
     });
 
     it('should place O at the specified position', () => {
@@ -20,8 +20,8 @@ describe('writeUserInput', () => {
             [' ', ' ', ' '],
         ];
 
-        writeUserInput(board, 'O', 0, 2);
+        const newBoard = writeUserInput(board, 'O', 0, 2);
 
-        expect(board[0][2]).toBe('O');
+        expect(newBoard[0][2]).toBe('O');
     });
 });

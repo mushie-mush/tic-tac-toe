@@ -4,16 +4,22 @@ function checkGameEnd(board, player) {
     const result = validateBoard(board, player);
 
     if (result === 'win') {
-        console.log(`${player} wins!`);
-        return true;
+        return {
+            isEnd: true,
+            message: `${player} wins!`
+        };
     }
 
     if (result === 'tie') {
-        console.log('Game is a tie!');
-        return true;
+        return {
+            isEnd: true,
+            message: 'Game is a tie!'
+        };
     }
 
-    return false;
+    return {
+        isEnd: false
+    };
 }
 
 module.exports = checkGameEnd;

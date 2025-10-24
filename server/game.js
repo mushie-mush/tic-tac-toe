@@ -26,7 +26,7 @@ const rl = readline.createInterface({
     output: process.stdout,
 });
 
-const board = [
+let board = [
     [" ", " ", " "],
     [" ", " ", " "],
     [" ", " ", " "],
@@ -97,20 +97,30 @@ async function start() {
         const [row, col] = answer.split(" ").map(Number);
         console.log(`You entered row: ${row}, column: ${col}`);
 
-        if (validateUserInput(board, row, col)) {
-            writeUserInput(board, currentPlayer, row, col);
+        const errorMessages = validateUserInput(board, row, col);
 
-            if (checkGameEnd(board, currentPlayer)) {
+        if (errorMessages.length === 0) {
+            board = writeUserInput(board, currentPlayer, row, col);
+
+            const { isEnd, message } = checkGameEnd(board, currentPlayer);
+
+            if (isEnd) {
+                ui.log(message);
                 return;
             }
+        } else {
+            errorMessages.forEach((msg) => ui.log(msg));
         }
     } else {
         const [computerRow, computerCol] = getRandomPosition(board);
-        writeUserInput(board, computer, computerRow, computerCol);
+        board = writeUserInput(board, computer, computerRow, computerCol);
 
         console.log("Computer placed at: ", computerRow, computerCol);
 
-        if (checkGameEnd(board, computer)) {
+        const { isEnd, message } = checkGameEnd(board, computer);
+
+        if (isEnd) {
+            ui.log(message);
             return;
         }
     }
