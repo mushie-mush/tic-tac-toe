@@ -6,9 +6,9 @@ let board = [
 ];
 
 const boardElement = document.getElementById("board");
-const resetButton = document.getElementById("reset");
+const resetButtonElement = document.getElementById("reset");
 
-function renderBoard(board, boardContainer) {
+function renderBoard(board, boardContainer, isEnd = false) {
     boardContainer.innerHTML = "";
     board.forEach((row, rowIndex) => {
         const rowDiv = document.createElement("div");
@@ -19,6 +19,10 @@ function renderBoard(board, boardContainer) {
             cellButton.dataset.row = rowIndex;
             cellButton.dataset.col = colIndex;
             cellButton.textContent = cell;
+            if (cell !== " " || isEnd) {
+
+                cellButton.disabled = true;
+            }
             cellButton.addEventListener("click", () => { handleCellClick(rowIndex, colIndex) })
             rowDiv.appendChild(cellButton);
         });
@@ -28,6 +32,7 @@ function renderBoard(board, boardContainer) {
 
 function renderUserMessage(message) {
     const userMessageElement = document.getElementById("message")
+    userMessageElement.classList.remove("hidden")
     userMessageElement.textContent = message
     // alert(message)
 }
@@ -42,7 +47,10 @@ async function computerTurn(board, player, playerMove) {
 }
 
 async function handleCellClick(row, col) {
-    const { computerMove, message, error } = await computerTurn(board, "X", [row, col]);
+    const { computerMove, isEnd, message, error } = await computerTurn(board, "X", [row, col]);
+
+    console.log(isEnd);
+
 
     if (error) {
         renderUserMessage(error);
@@ -59,8 +67,14 @@ async function handleCellClick(row, col) {
 
     playMove(board, [row, col], "X")
 
-    renderBoard(board, boardElement);
+    renderBoard(board, boardElement, isEnd);
 }
+
+function resetGame() {
+    window.location.reload();
+}
+
+resetButtonElement.addEventListener("click", resetGame);
 
 // Slight coupling between board and cells by placing the event listener on the board.
 // boardElement.addEventListener("click", async (event) => {

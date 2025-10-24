@@ -45,22 +45,37 @@ app.get("/play", (req, res) => {
         console.log(errorMessages)
         res.send({ error: errorMessages[0] });
     } else {
-        const newBoard = writeUserInput(board, player, row, col)
-        const { isEnd, message } = checkGameEnd(newBoard, "X");
+        // const newBoard = writeUserInput(board, player, row, col)
+        // const { isEnd, message } = checkGameEnd(newBoard, "X");
 
-        if (isEnd) {
-            res.send({ message, computerMove: null });
+        // if (isEnd) {
+        //     res.send({ message, isEnd, computerMove: null });
+        //     return;
+        // }
+
+        // const [computerRow, computerCol] = getRandomPosition(newBoard)
+        // const { isEnd, message } = checkGameEnd(newBoard, "O");
+
+        // if (isEnd) {
+        //     res.send({ message, isEnd, computerMove: [computerRow, computerCol] });
+        //     return;
+        // }
+
+        // res.send({ isEnd, computerMove: [computerRow, computerCol] });
+
+        const newBoard = writeUserInput(board, player, row, col);
+        let gameState = checkGameEnd(newBoard, "X");
+
+        if (gameState.isEnd) {
+            res.send({ ...gameState, computerMove: null });
             return;
         }
 
-        const [computerRow, computerCol] = getRandomPosition(newBoard)
+        const [computerRow, computerCol] = getRandomPosition(newBoard);
+        const updatedBoard = writeUserInput(newBoard, "O", computerRow, computerCol);
+        gameState = checkGameEnd(updatedBoard, "O");
 
-        if (isEnd) {
-            res.send({ message, computerMove: [computerRow, computerCol] });
-            return;
-        }
-
-        res.send({ computerMove: [computerRow, computerCol] });
+        res.send({ ...gameState, computerMove: [computerRow, computerCol] });
 
     }
 });
