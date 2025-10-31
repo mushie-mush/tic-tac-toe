@@ -1,7 +1,7 @@
 :root {
-  --primary-color-300: #d90429;
-  --primary-color-200: #f52f46;
-  --primary-color-100: #f99896;
+  --primary-color-300: #f52f46;
+  --primary-color-200: #ff7c8c;
+  --primary-color-100: #ffdad9;
   --secondary-color-300: #2b2d42;
   --secondary-color-200: #72768b;
   --secondary-color-100: #dad7da;
@@ -113,6 +113,11 @@ h1 {
   border-radius: 0.5rem;
 }
 
+#message.error {
+  color: var(--primary-color-300);
+  background-color: var(--primary-color-100);
+}
+
 .hidden {
   display: none;
 }
@@ -121,7 +126,7 @@ h1 {
   padding: 1rem 2rem;
   font-size: 1.6rem;
   color: #ffffff;
-  background-color: var(--primary-color-200);
+  background-color: var(--primary-color-300);
   border: none;
   border-radius: 4rem;
   cursor: pointer;

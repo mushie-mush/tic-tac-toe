@@ -16,20 +16,20 @@ app.get("/", (req, res) => {
     res.send("hello world");
 });
 
-class WebUi {
-    constructor(output = console, input = rl) {
-        this.output = output;
-        this.input = input;
-    }
+// class WebUi {
+//     constructor(output = console, input = rl) {
+//         this.output = output;
+//         this.input = input;
+//     }
 
-    log(message) {
-        this.output.send(message);
-    }
+//     log(message) {
+//         this.output.send(message);
+//     }
 
-    // async ask(question) {
-    //     return await this.input.question(question);
-    // }
-}
+//     // async ask(question) {
+//     //     return await this.input.question(question);
+//     // }
+// }
 
 // request: play?board=[["O"," "," "],[" "," "," "],[" "," "," "]]&player=X&move=[0,1]
 // response: [0,1]
@@ -38,7 +38,7 @@ app.get("/play", (req, res) => {
     const player = req.query.player;
     const [row, col] = JSON.parse(req.query.move)
 
-    const webUi = new WebUi(req, res)
+    // const webUi = new WebUi(req, res)x
     const errorMessages = validateUserInput(board, row, col)
 
     if (errorMessages.length) {

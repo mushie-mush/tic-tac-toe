@@ -16,13 +16,20 @@ function renderBoard(board, boardContainer, isEnd = false) {
         row.forEach((cell, colIndex) => {
             const cellButton = document.createElement("button");
             cellButton.classList.add("cell");
+
+            if (cell === "X") {
+                cellButton.classList.add("x");
+            }
+
             cellButton.dataset.row = rowIndex;
             cellButton.dataset.col = colIndex;
             cellButton.textContent = cell;
+
             if (cell !== " " || isEnd) {
 
                 cellButton.disabled = true;
             }
+
             cellButton.addEventListener("click", () => { handleCellClick(rowIndex, colIndex) })
             rowDiv.appendChild(cellButton);
         });
@@ -48,9 +55,6 @@ async function computerTurn(board, player, playerMove) {
 
 async function handleCellClick(row, col) {
     const { computerMove, isEnd, message, error } = await computerTurn(board, "X", [row, col]);
-
-    console.log(isEnd);
-
 
     if (error) {
         renderUserMessage(error);
