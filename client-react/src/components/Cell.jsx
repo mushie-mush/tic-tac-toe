@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { GridContext } from '../context/GridContext';
-import { getComputerMove } from '../App';
 import { GameContext } from '../context/GameContext';
+import { getComputerMove } from '../services/getComputerMove';
 
 const HUMAN_PLAYER_MARK = 'X';
 const COMPUTER_PLAYER_MARK = 'O';
@@ -18,6 +18,7 @@ function Cell({ row, col }) {
       message: responseMessage,
       error: responseError,
     } = await getComputerMove(grid, HUMAN_PLAYER_MARK, [row, col]);
+    const newGrid = grid.map((row) => [...row]);
 
     setError(responseError || null);
 
@@ -25,11 +26,15 @@ function Cell({ row, col }) {
 
     setMessage(responseMessage || null);
 
-    updateGrid(row, col, HUMAN_PLAYER_MARK);
+    newGrid[row][col] = HUMAN_PLAYER_MARK;
+
+    // updateGrid(row, col, HUMAN_PLAYER_MARK);
 
     if (computerMove)
-      updateGrid(computerMove[0], computerMove[1], COMPUTER_PLAYER_MARK);
+      newGrid[computerMove[0]][computerMove[1]] = COMPUTER_PLAYER_MARK;
+    // updateGrid(computerMove[0], computerMove[1], COMPUTER_PLAYER_MARK);
 
+    updateGrid(newGrid);
     setGameOver(isEnd);
   };
 

@@ -26,10 +26,10 @@ import Game from './components/Game';
 //   )
 // }
 
-export const getComputerMove = async (board, player, playerMove) => {
-  const response = await fetch(`http://localhost:3000/play?board=${JSON.stringify(board)}&player=${player}&move=${encodeURIComponent(JSON.stringify(playerMove))}`);
-  return await response.json();
-}
+// export const getComputerMove = async (board, player, playerMove) => {
+//   const response = await fetch(`http://localhost:3000/play?board=${JSON.stringify(board)}&player=${player}&move=${encodeURIComponent(JSON.stringify(playerMove))}`);
+//   return await response.json();
+// }
 
 function App() {
   // const [grid, setGrid] = useState(Array(3).fill(Array(3).fill(' ')));
