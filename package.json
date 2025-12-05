@@ -1,6 +1,7 @@
 {
   "scripts": {
     "server": "node server/server.js",
+    "server-python": "cd server-python && uv run flask --app main.py run",
     "client": "serve client",
     "client-react": "cd client-react && npm start"
   }

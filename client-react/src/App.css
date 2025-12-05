@@ -122,21 +122,30 @@ h1 {
   display: none;
 }
 
+.game-buttons {
+  display: flex;
+  gap: 2rem;
+}
+
 .button {
   padding: 1rem 2rem;
   font-size: 1.6rem;
   color: #ffffff;
-  background-color: var(--primary-color-200);
+  background-color: var(--secondary-color-300);
   border: none;
   border-radius: 4rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s ease;
+}
+
+.button:hover {
+  background-color: var(--secondary-color-200);
 }
 
 .reset {
   background-color: var(--primary-color-300);
 }
 
-.button:hover {
-  background-color: var(--primary-color-300);
+.reset:hover {
+  background-color: var(--primary-color-200);
 }

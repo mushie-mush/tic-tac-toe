@@ -1,10 +1,9 @@
 import { useContext } from 'react';
-import { saveGame } from '../services/saveGame';
 import { GridContext } from '../context/GridContext';
 import { loadGame } from '../services/loadGame';
 
 function UndoButton() {
-  const { grid, updateGrid } = useContext(GridContext);
+  const { updateGrid } = useContext(GridContext);
 
   const handleUndoButton = async () => {
     // const response = await saveGame(grid, 'X');
