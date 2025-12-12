@@ -1,11 +1,13 @@
 import { createContext, useEffect, useState } from 'react';
+import { saveGame } from '../services/saveGame';
 
 const GridContext = createContext();
 
 const GridProvider = ({ children }) => {
   const [grid, setGrid] = useState(Array(3).fill(Array(3).fill(' ')));
 
-  const updateGrid = (newGrid) => {
+  const updateGrid = async (newGrid) => {
+    await saveGame(newGrid, 'X');
     setGrid(newGrid);
     // setGrid(newGrid.map((r) => [...r]));
     // setGrid((prevGrid) => {

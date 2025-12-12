@@ -7,7 +7,6 @@ function SaveButton() {
 
   const handleSave = async () => {
     const response = await saveGame(grid, 'X');
-    console.log(response);
   };
 
   return (

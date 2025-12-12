@@ -3,6 +3,12 @@ import ResetButton from './ResetButton';
 import SaveButton from './SaveButton';
 import UndoButton from './UndoButton';
 
+function sendMesage() {
+  navigator.serviceWorker.controller.postMessage({
+    type: '123',
+  });
+}
+
 function Game() {
   return (
     <div id="game">
@@ -11,6 +17,7 @@ function Game() {
         <ResetButton />
         <UndoButton />
         <SaveButton />
+        <button onClick={sendMesage}>broadcast</button>
       </div>
     </div>
   );

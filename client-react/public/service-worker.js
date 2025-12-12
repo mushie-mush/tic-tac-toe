@@ -1,103 +1,173 @@
 const OFFLINE_VERSION = 1;
 const CACHE_NAME = "offline";
-const OFFLINE_URL = "/offline.html";
-const DB_VERSION = 2
+const OFFLINE_URL = ["/", "/index.html", "/static/js/bundle.js", "/offline.html", "/manifest.json"];
+const DB_VERSION = 1
 
-const request = indexedDB.open("tic-tac-toe", DB_VERSION)
-let db;
-
-request.onsuccess = (event) => {
-    db = event.target.result;
-    console.log("success!")
-}
-
-request.onerror = (event) => {
-    console.log("error", event)
-}
-
-request.onupgradeneeded = (event) => {
-    db = event.target.result;
-    db.createObjectStore("savedrequests", { keyPath: "timestamp" })
-    console.log("onupgradeneeded")
+function openDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open("tic-tac-toe", DB_VERSION)
+        request.onsuccess = (event) => {
+            resolve(event.target.result)
+        }
+        request.onerror = (event) => {
+            reject(event)
+        }
+        request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            db.createObjectStore("savedrequests", { keyPath: "timestamp" })
+            console.log("onupgradeneeded")
+        }
+    })
 }
 
 self.addEventListener("install", (event) => {
     event.waitUntil(
         (async () => {
             const cache = await caches.open(CACHE_NAME);
-            // Setting {cache: 'reload'} in the new request ensures that the
-            // response isn't fulfilled from the HTTP cache; i.e., it will be
-            // from the network.
-            await cache.add(new Request(OFFLINE_URL, { cache: "reload" }));
+            await cache.addAll(OFFLINE_URL);
         })()
     );
-    // Force the waiting service worker to become the active service worker.
     self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
     event.waitUntil(
         (async () => {
-            // Enable navigation preload if it's supported.
-            // See https://developers.google.com/web/updates/2017/02/navigation-preload
             if ("navigationPreload" in self.registration) {
                 await self.registration.navigationPreload.enable();
             }
         })()
     );
 
-    // Tell the active service worker to take control of the page immediately.
     self.clients.claim();
 });
 
-self.addEventListener("fetch", (event) => {
-    if (event.request.url === "http://127.0.0.1:5000/games/save") {
-        const objectStore = db.transaction('savedrequests', 'readwrite').objectStore('savedrequests')
-        console.log('objectStore', objectStore)
-        objectStore.add({ method: event.request.method, url: event.request.url, body: event.request.body })
+self.addEventListener('message', async (event) => {
+    console.log('event', event)
+    if (event.data && event.data.type === '123') {
+        if (navigator.onLine) {
+            const db = await openDB()
+            const objectStore = db.transaction('savedrequests', 'readwrite').objectStore('savedrequests')
+            const request = objectStore.openCursor()
+
+            request.onsuccess = async (event) => {
+                if (event.target.result) {
+                    const result = event.target.result
+                    console.log(result.value)
+
+                    fetch(result.value.url, {
+                        method: result.value.method,
+                        headers: {
+                            'content-type': 'application/json'
+                        },
+                        body: JSON.stringify(result.value.body)
+                    })
+
+                    const request1 = objectStore.delete(result.key)
+
+                    // const request = result.delete()
+                    request1.onsuccess = () => {
+                        console.log("deleted")
+                    }
+                    request1.onerror = (error) => {
+                        console.error(error)
+                    }
+                    result.continue()
+                }
+            }
+        }
     }
+});
+
+self.addEventListener("fetch", async (event) => {
+
+    // if (event.request.url === "http://127.0.0.1:5000/games/save") {
+    //     const db = await openDB()
+    //     const body = await event.request.clone().json()
+    //     const objectStore = db.transaction('savedrequests', 'readwrite').objectStore('savedrequests')
+    //     console.log('objectStore', objectStore)
+    //     objectStore.add({ timestamp: Date.now(), method: event.request.method, url: event.request.url, body: body })
+    // }
+
+    // Are we offline? If so,
+    // Return an empty response
 
     console.log(event.request)
-    // Only call event.respondWith() if this is a navigation request
-    // for an HTML page.
-    if (event.request.mode === "navigate") {
+    // const body = await event.request.clone().json()
+    // if (event.request.mode === "navigate") {
+    if (event.request.method === "POST") {
         event.respondWith(
             (async () => {
+                let body
                 try {
-                    // First, try to use the navigation preload response if it's
-                    // supported.
+
                     const preloadResponse = await event.preloadResponse;
                     if (preloadResponse) {
                         return preloadResponse;
                     }
+                    body = await event.request.clone()
+                    body = await body.json()
 
-                    // if (event.request.url === "http://127.0.0.1:5000/games/save") {
+                    console.log("body:", body)
 
-                    // }
-
-                    // Always try the network first.
                     const networkResponse = await fetch(event.request);
                     return networkResponse;
                 } catch (error) {
-                    // catch is only triggered if an exception is thrown, which is
-                    // likely due to a network error.
-                    // If fetch() returns a valid HTTP response with a response code in
-                    // the 4xx or 5xx range, the catch() will NOT be called.
+                    if (event.request.url === "http://127.0.0.1:5000/games/save") {
+                        const db = await openDB()
+                        // const body = await event.request.clone().json()
+                        const objectStore = db.transaction('savedrequests', 'readwrite').objectStore('savedrequests')
+                        console.log('objectStore', objectStore)
+                        objectStore.add({ timestamp: Date.now(), method: event.request.method, url: event.request.url, body: body })
+                        return new Response(JSON.stringify({
+                            gameId: 0
+                        }))
+                    }
+
                     console.log("Fetch failed; returning offline page instead.", error);
 
-
-                    const cache = await caches.open(CACHE_NAME);
-                    const cachedResponse = await cache.match(OFFLINE_URL);
-                    return cachedResponse;
+                    // const cache = await caches.open(CACHE_NAME);
+                    // const cachedResponse = await cache.match("/offline.html");
+                    return;
                 }
             })()
         );
     }
-
-    // If our if() condition is false, then this fetch handler won't
-    // intercept the request. If there are any other fetch handlers
-    // registered, they will get a chance to call event.respondWith().
-    // If no fetch handlers call event.respondWith(), the request
-    // will be handled by the browser as if there were no service
-    // worker involvement.
 });
+
+
+navigator.connection.onchange = async () => {
+    console.log(navigator.onLine)
+
+    if (navigator.onLine) {
+        const db = await openDB()
+        const objectStore = db.transaction('savedrequests', 'readwrite').objectStore('savedrequests')
+        const request = objectStore.openCursor()
+
+        request.onsuccess = async (event) => {
+            if (event.target.result) {
+                const result = event.target.result
+                console.log(result.value)
+
+                fetch(result.value.url, {
+                    method: result.value.method,
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify(result.value.body)
+                })
+
+                const request1 = objectStore.delete(result.key)
+
+                // const request = result.delete()
+                request1.onsuccess = () => {
+                    console.log("deleted")
+                }
+                request1.onerror = (error) => {
+                    console.error(error)
+                }
+                result.continue()
+            }
+        }
+    }
+}
