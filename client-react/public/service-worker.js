@@ -1,4 +1,4 @@
-const OFFLINE_VERSION = 1;
+const OFFLINE_VERSION = 3;
 const CACHE_NAME = "offline";
 const OFFLINE_URL = ["/", "/index.html", "/static/js/bundle.js", "/offline.html", "/manifest.json"];
 const DB_VERSION = 1
